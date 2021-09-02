@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
+import { auth } from '../firebase';
 
 const Login = () => {
 
@@ -31,7 +32,27 @@ const Login = () => {
         setError(null);
         /* console.log("Verified validations."); */
 
+        if(isRegister){
+            userRegister();
+        }
+
     }
+
+    const userRegister = useCallback(async() => {
+        try {
+            const answer = await auth.createUserWithEmailAndPassword(email, pass);
+            console.log(answer.user);
+        } catch (error) {
+            console.log(error);
+            if(error.code === 'auth/invalid-email'){
+                setError('Invalid Email');
+            }
+
+            if(error.code === 'auth/email-already-in-use'){
+                setError('Email already exists')
+            }
+        }
+    }, [email, pass])
 
     return (
         <div className="mt-5">
