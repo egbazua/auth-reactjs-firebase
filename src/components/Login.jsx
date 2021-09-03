@@ -34,9 +34,36 @@ const Login = () => {
 
         if(isRegister){
             userRegister();
+        }else{
+            userLogin();
         }
 
     }
+
+    const userLogin = useCallback(async() => {
+        try {
+            const answer = await auth.signInWithEmailAndPassword(email,pass);
+            console.log(answer.user);
+
+            setEmail('');
+            setPass('');
+            setError(null);
+
+        } catch (error) {
+            console.log(error);
+            if(error.code === 'auth/invalid-email'){
+                setError('Invalid Email.');
+            }
+
+            if(error.code === 'auth/user-not-found'){
+                setError('User not found.');
+            }
+
+            if(error.code === 'auth/wrong-password'){
+                setError('Incorrect password.');
+            }
+        }
+    }, [email, pass]) 
 
     const userRegister = useCallback(async() => {
         try {
@@ -46,9 +73,11 @@ const Login = () => {
                 email: answer.user.email,
                 uid: answer.user.uid
             })
+
             setEmail('');
             setPass('');
-            SetError(null);
+            setError(null);
+
         } catch (error) {
             console.log(error);
             if(error.code === 'auth/invalid-email'){
