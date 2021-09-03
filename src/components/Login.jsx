@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 
 const Login = () => {
 
@@ -42,6 +42,13 @@ const Login = () => {
         try {
             const answer = await auth.createUserWithEmailAndPassword(email, pass);
             console.log(answer.user);
+            await db.collection('users').doc(answer.user.email).set({
+                email: answer.user.email,
+                uid: answer.user.uid
+            })
+            setEmail('');
+            setPass('');
+            SetError(null);
         } catch (error) {
             console.log(error);
             if(error.code === 'auth/invalid-email'){
