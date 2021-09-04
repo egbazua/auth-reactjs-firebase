@@ -9,6 +9,9 @@ function Firestore(props) {
   const [taskForm, setTaskForm] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [id, setId] = useState('');
+  const [lastOne, setLastOne] = useState(null)
+  const [desactivate, setDesactivate] = useState(false)
+
  
   useEffect(() => {
     
@@ -16,10 +19,23 @@ function Firestore(props) {
 
       try {
         
-        const data = await db.collection(props.user.uid).get()
+        setDesactivate(true);
+        const data = await db.collection(props.user.uid).limit(2).orderBy('date').get()
         const dataArray = data.docs.map( (doc) => ({id: doc.id, ...doc.data() }));
+
+        setLastOne(data.docs[data.docs.length - 1]);
+
         /* console.log(dataArray); */
         setTask(dataArray);
+
+        const query = await db.collection(props.user.uid).limit(2).orderBy('date', 'desc').startAfter(data.docs[data.docs.length - 1]).get()
+
+        if(query.empty){
+          console.log('There are no more documents.');
+          setDesactivate(true);
+        }else{
+          setDesactivate(false);
+        }
 
       } catch (error) {
         console.log(error);
@@ -111,6 +127,33 @@ function Firestore(props) {
 
   }
 
+  const nextRegister = async() => {
+    console.log('next');
+    setDesactivate(true);
+    try {
+      const data = await db.collection(props.user.uid).limit(2).orderBy('date').startAfter(lastOne).get();
+      setLastOne(data.docs[data.docs.length - 1]);
+      
+      const arrayData = data.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setTask([
+        ...task,
+        ...arrayData
+      ]);
+      
+      const query = await db.collection(props.user.uid).limit(2).orderBy('date', 'desc').startAfter(data.docs[data.docs.length - 1]).get()
+
+      if(query.empty){
+        console.log('There are no more documents.');
+        setDesactivate(true);
+      }else{
+        setDesactivate(false);
+      }
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   return (
     <div className="container">
       <h1 className="text-center mt-1"> • ADMINSTRATION • </h1>
@@ -132,6 +175,7 @@ function Firestore(props) {
               ))
             }
           </ul>
+          <button disabled={ desactivate }  onClick={() => nextRegister()} className="btn btn-info w-100 mt-2 btn-sm">Next</button>
         </div>
         <div className="col-md-6">
           <h3 className="text-center">
