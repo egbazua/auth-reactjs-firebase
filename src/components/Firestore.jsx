@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
+import moment from 'moment';
+import 'moment/locale/es';
 
 function Firestore(props) {
 
@@ -27,7 +29,7 @@ function Firestore(props) {
 
     getData();
 
-  }, []);
+  }, [props.user.uid]);
 
   const addTask = async (e) => {
     e.preventDefault();
@@ -119,7 +121,7 @@ function Firestore(props) {
             {
               task.map(item => (
                 <li className="list-group-item" key={item.id}>
-                  {item.name}
+                  {item.name} - {moment(item.date).format('LLL')}
                   <button onClick={ () => deleteTask(item.id)} className="btn btn-danger btn-sm float-end ms-2">
                     Delete
                   </button>

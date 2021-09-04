@@ -129,6 +129,12 @@ const Login = (props) => {
                                 isRegister ? 'Do you already have an account?' : 'You do not have an account?'
                             }
                         </button>
+                        {
+                            !isRegister ? (
+                                <button onClick={() => props.history.push('/reset')} className="btn btn-success btn-sm w-100 mt-2" type="button">Recover Password</button>
+                            ) : null
+
+                        }
                     </form>
                 </div>
             </div>
