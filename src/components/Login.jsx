@@ -76,6 +76,13 @@ const Login = (props) => {
                 uid: answer.user.uid
             })
 
+            await db.collection(answer.user.uid).add(
+                {
+                    nameTask: 'Example task',
+                    dateTask: Date.now()
+                }
+            )
+
             setEmail('');
             setPass('');
             setError(null);

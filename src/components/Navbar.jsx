@@ -18,9 +18,15 @@ const Navbar = (props) => {
                     <NavLink className="btn btn-dark me-2" to="/" exact>
                         Home
                     </NavLink>
-                    <NavLink className="btn btn-dark me-2" to="/admin" exact>
-                        Admin
-                    </NavLink>
+                    
+                    {
+                        props.firebaseUser !== null ? (
+                            <NavLink className="btn btn-dark me-2" to="/admin" exact>
+                                Admin
+                            </NavLink>
+                        ) : null
+                    }
+
                     {
                         props.firebaseUser !== null ? (
                             <button onClick={() => userLogout()} className="btn btn-danger me-2">Logout</button>

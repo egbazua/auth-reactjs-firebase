@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { auth } from '../firebase';
 import { withRouter } from 'react-router';
+import Firestore from './Firestore';
 
 const Admin = (props) => {
     
@@ -16,11 +17,16 @@ const Admin = (props) => {
             props.history.push('/login');
         }
 
-    }, []);
+    }, [props.history]);
 
     return (
         <div>
-           <h2>Hola admin</h2> 
+           {/* <h2>Hola admin</h2>  */}
+           {
+               user && (
+                   <Firestore user={user}/>
+               )
+           }
         </div>
     )
 }
